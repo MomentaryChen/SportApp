@@ -149,7 +149,7 @@ public class MapsActivity extends android.support.v4.app.Fragment implements  On
                     Toast.makeText(v.getContext(), tContent, Toast.LENGTH_SHORT).show();
                     paintLine();
                 }else{
-                    Toast.makeText(v.getContext(), "沒有移動", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), "沒有移動 ", Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e){
