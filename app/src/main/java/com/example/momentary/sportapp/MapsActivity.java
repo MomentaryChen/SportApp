@@ -3,6 +3,7 @@ package com.example.momentary.sportapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.util.Log;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -49,18 +50,19 @@ import java.security.spec.ECField;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Math.abs;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
-public class MapsActivity extends android.support.v4.app.Fragment implements  OnMapReadyCallback {
+public class MapsActivity extends android.support.v4.app.Fragment implements OnMapReadyCallback {
     SupportMapFragment mMapView;
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
     private MapView mapView;
     private LocationManager locMgr;
-    private final static String createGPSTable = "CREATE TABLE tableGPS(_id integer not null,loc_x real,loc_y real,distance int)";
+    private final static String createGPSTable = "CREATE TABLE tableGPS(_id integer not null,loc_x real,loc_y real,distance real)";
     private SQLiteDatabase db = null;
-    int distance=0;
-    int id=0;
+    double distance = 0;
+    int id = 0;
     String bestProv;
     View v;
     private Handler handler = new Handler();
@@ -72,47 +74,51 @@ public class MapsActivity extends android.support.v4.app.Fragment implements  On
         mapView.onCreate(savedInstanceState);
         mapView.onResume();// needed to get the map to display immediately
         mapView.getMapAsync(this);
-        locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        bestProv = locMgr.getBestProvider(criteria, true);
         db = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
         handler.removeCallbacks(updateTimer);
         //設定Delay的時間
-        handler.postDelayed(updateTimer, 5000);
+        handler.postDelayed(updateTimer, 10000);
         return v;
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in Sydney and move the camera
         getActivity().setTitle("地圖");
-        Location location=locMgr.getLastKnownLocation(bestProv);
+
+        if (ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            getActivity().setTitle("No location");
+            return;
+        }
+        locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        bestProv = locMgr.getBestProvider(criteria, false);
+        Location location = locMgr.getLastKnownLocation(bestProv);
         LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
-        //db.execSQL("drop table tableGPS");
-        try{
-            db.execSQL(createGPSTable);
-            db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
-        }catch (Exception e){
-        }
-        Cursor cursor=getAll("tableGPS");
-        if(cursor==null || cursor.getCount()==1){
-            distance=0;
-            id=1;
-        }else{
-            cursor.moveToLast();
-            distance=cursor.getInt(3);
-            id=cursor.getInt(0);
-        }
-        //db.execSQL("drop table tableGPS");
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,14));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
+        mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);                                         //地圖的初始型態
         mMap.getUiSettings().setCompassEnabled(true);                                              //指南針顯示設定
         mMap.getUiSettings().setAllGesturesEnabled(true);//設定所有手勢控制
-        mMap.setMyLocationEnabled(true);
 
+        //db.execSQL("drop table tableGPS");
+        try{
+            db.execSQL(createGPSTable);
+            db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
+            Cursor cursor=getAll("tableGPS");
+            if(cursor==null || cursor.getCount()==1){
+                distance=0;
+                id=1;
+            }else{
+                cursor.moveToLast();
+                distance=cursor.getDouble(3);
+                id=cursor.getInt(0);
+            }
+        }catch (Exception e){
+        }
+        //db.execSQL("drop table tableGPS");
         paintLine();
 
     }
@@ -135,15 +141,17 @@ public class MapsActivity extends android.support.v4.app.Fragment implements  On
                 double Latitude=location.getLatitude();
                 double Longitude=location.getLongitude();
                 LatLng currentLoc = new LatLng(Latitude,Longitude);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,14));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
                 Cursor cursor=getAll("tableGPS");
                 cursor.moveToLast();
                 double passLatitude=cursor.getDouble(1);
                 double passLongtitude=cursor.getDouble(2);
-                String tContent = String.format("緯差 : %s\n經度差 : %s距離",abs(Latitude-passLatitude),abs(Longitude-passLongtitude),distance);
-                if(abs(Latitude-passLatitude)>=0.000000001 || abs(Longitude-passLongtitude)>=0.000000001) {
+                if(abs(Latitude-passLatitude)>=0.00005 || abs(Longitude-passLongtitude)>=0.00005) {
                     distance += pow(Math.pow(abs(Latitude - passLatitude), 2) + Math.pow(abs(Longitude - passLongtitude), 2), 1 / 2) * 110;
-                    //String tContent = String.format("緯 : %s\n經度 : %s\n距離 : %s",location.getLatitude(),location.getLongitude(),distance);
+                    Log.v("distance",Double.toString(distance));
+                    Log.v("Latitude",Double.toString(abs(Latitude-passLatitude)));
+                    Log.v("Longitude",Double.toString(abs(Longitude-passLongtitude)));
+                    String tContent = String.format("緯差 : %s\n經度差 : %s距離",abs(Latitude),abs(Longitude),distance);
                     id++;
                     db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values (" + id + "," + Latitude+ "," + Longitude+ "," + distance + ")");
                     Toast.makeText(v.getContext(), tContent, Toast.LENGTH_SHORT).show();
@@ -172,7 +180,6 @@ public class MapsActivity extends android.support.v4.app.Fragment implements  On
         }
     };
 
-
     public void paintLine() {
         Cursor cursor = getAll("tableGPS");
         PolylineOptions rectOptions = new PolylineOptions();
@@ -184,7 +191,7 @@ public class MapsActivity extends android.support.v4.app.Fragment implements  On
             }
         }
         Polyline polyline = mMap.addPolyline(rectOptions);
-        Toast.makeText(v.getContext(), "路線更新", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

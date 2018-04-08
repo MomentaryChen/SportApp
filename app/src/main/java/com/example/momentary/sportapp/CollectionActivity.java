@@ -22,8 +22,8 @@ public class CollectionActivity extends android.support.v4.app.Fragment {
     private ImageButton imgbtn1;
     private ImageButton imgbtn2;
     private ImageButton imgbtn3;
-    private int distance;
-    private final static String createGPSTable = "CREATE TABLE tableGPS(_id integer not null,loc_x decimal,loc_y decimal,distance int)";
+    private double distance;
+    private final static String createGPSTable = "CREATE TABLE tableGPS(_id integer not null,loc_x real,loc_y real,distance real)";
     private SQLiteDatabase db=null;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,14 +55,14 @@ public class CollectionActivity extends android.support.v4.app.Fragment {
         //db.execSQL("drop table tableGPS");
         try{
             db.execSQL(createGPSTable);
-            //db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values (0,24,120,1000)");
         }catch (Exception e){
         }
         Cursor cursor=getAll("tableGPS");
         if(cursor==null ||cursor.getCount()<=0 ){
+            distance=0;
         }else{
             cursor.moveToLast();
-            distance=cursor.getInt(3);
+            distance=cursor.getDouble(3);
             if(distance>500){
                 Toast.makeText(v.getContext(),"You get the new pet",Toast.LENGTH_LONG).show();
                 Glide.with(v.getContext())
@@ -73,9 +73,7 @@ public class CollectionActivity extends android.support.v4.app.Fragment {
                         .into(imgbtn3);
             }
         }
-        cursor.moveToLast();
-        distance=cursor.getInt(3);
-        getActivity().setTitle("圖鑑    已完成距離"+Integer.toString(distance)+"KM");             //debug
+        getActivity().setTitle("圖鑑    已完成距離"+Double.toString(distance)+"KM");             //debug
         db.close();
         return v;
     }
