@@ -30,9 +30,9 @@ public class WeightButtonActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    StoreActivity Stor = new StoreActivity();
+                    HomeActivity Home = new HomeActivity();
                     frag.beginTransaction()
-                            .replace(R.id.frameLayout, Stor,"Store")
+                            .replace(R.id.frameLayout, Home,"Home")
                             .commit();
                     return true;
                 case R.id.navigation_store:
@@ -65,9 +65,9 @@ public class WeightButtonActivity extends AppCompatActivity {
         setContentView(R.layout.acticity_weight_button);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        StoreActivity Store=new StoreActivity();
+        HomeActivity Home=new HomeActivity();
         frag.beginTransaction()
-                .replace(R.id.frameLayout, Store,"Map")
+                .replace(R.id.frameLayout, Home,"Home")
                 //.add(R.id.frameLayout, Store,"store")
                 .commit();
     }

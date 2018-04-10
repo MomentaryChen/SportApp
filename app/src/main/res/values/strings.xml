@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SportApp</string>
+    <string name="app_name">Running pokemon</string>
     <string name="title_activity_map">Map</string>
     <string name="title_activity_button_frame">ButtonFrameActivity</string>
     <string name="title_home">Home</string>
@@ -8,5 +8,9 @@
     <string name="title_notebook">Notebook</string>
     <string name="title_collection">Collection</string>
     <string name="title_notifications">Notifications</string>
+    <string name="EXP">EXP.</string>
+    <string name="have_exp">000000000</string>
+    <string name="need_exp">999999999</string>
+    <string name="coin_count">9487</string>
 
 </resources>
