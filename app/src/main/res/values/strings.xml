@@ -8,9 +8,9 @@
     <string name="title_notebook">Notebook</string>
     <string name="title_collection">Collection</string>
     <string name="title_notifications">Notifications</string>
-    <string name="EXP">EXP.</string>
-    <string name="have_exp">000000000</string>
-    <string name="need_exp">999999999</string>
+    <string name="EXP">EXP.  </string>
+    <string name="have_exp">0000000</string>
+    <string name="need_exp">9999999</string>
     <string name="coin_count">9487</string>
 
 </resources>

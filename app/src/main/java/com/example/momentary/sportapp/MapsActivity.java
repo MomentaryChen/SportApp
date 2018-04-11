@@ -76,11 +76,11 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         mapView.onResume();// needed to get the map to display immediately
         mapView.getMapAsync(this);
         db = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
-
         locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        bestProv = locMgr.getBestProvider(criteria, false);
-        location = locMgr.getLastKnownLocation(bestProv);
+       // location = locMgr.getLastKnownLocation(bestProv);
+        handler.removeCallbacks(updateTimer);
+        //設定Delay的時間
+        handler.postDelayed(updateTimer, 5000);
         return v;
     }
 
@@ -92,45 +92,48 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
             getActivity().setTitle("No location");
             return;
         }
-        locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        bestProv = locMgr.getBestProvider(criteria, false);
-        location = locMgr.getLastKnownLocation(bestProv);
-        if(location==null){
-            location = locMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        }
-        LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);                                         //地圖的初始型態
         mMap.getUiSettings().setCompassEnabled(true);                                              //指南針顯示設定
         mMap.getUiSettings().setAllGesturesEnabled(true);//設定所有手勢控制
+        //db.execSQL("drop table tableGPS");
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(false);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
 
-        //db.execSQL("drop table tableGPS");
-        try{
-            db.execSQL(createGPSTable);
-            db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
-            Cursor cursor=getAll("tableGPS");
-            if(cursor==null || cursor.getCount()==1){
-                distance=0;
-                id=1;
-            }else{
-                cursor.moveToLast();
-                distance=cursor.getDouble(3);
-                id=cursor.getInt(0);
-            }
-        }catch (Exception e){
-        }
-        //db.execSQL("drop table tableGPS");
+        bestProv = locMgr.getBestProvider(criteria, false);
+        location = locMgr.getLastKnownLocation(bestProv);
         paintLine();
+        if(location==null){
+            Toast.makeText(v.getContext(), "USE NETWORK LOCATION ", Toast.LENGTH_SHORT).show();
+            location = locMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+            LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
+            try{
+                db.execSQL(createGPSTable);
+                db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
+                Cursor cursor=getAll("tableGPS");
+                if(cursor==null || cursor.getCount()==1){
+                    distance=0;
+                    id=1;
+                }else{
+                    cursor.moveToLast();
+                    distance=cursor.getDouble(3);
+                    id=cursor.getInt(0);
+                }
+            }catch (Exception e){
+            }
+            //db.execSQL("drop table tableGPS");
+
     }
     public void onResume() {
         super.onResume();
-        handler.removeCallbacks(updateTimer);
-        //設定Delay的時間
-        handler.postDelayed(updateTimer, 10000);
+
     }
     @Override
     public void onPause() {
@@ -143,13 +146,13 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         id=0;
     }
 
-
     private Runnable updateTimer = new Runnable() {     //Timer
         @SuppressLint("MissingPermission")
         public void run() {
-            try{
+            if(locMgr.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,gLListenr);
+            }else if(locMgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,gLListenr);
-            }catch (Exception e){
             }
             handler.postDelayed(this, 3000);
         }
