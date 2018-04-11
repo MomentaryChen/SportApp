@@ -64,6 +64,7 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
     double distance = 0;
     int id = 0;
     String bestProv;
+    Location location;
     View v;
     private Handler handler = new Handler();
 
@@ -75,9 +76,11 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         mapView.onResume();// needed to get the map to display immediately
         mapView.getMapAsync(this);
         db = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
-        handler.removeCallbacks(updateTimer);
-        //設定Delay的時間
-        handler.postDelayed(updateTimer, 10000);
+
+        locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        bestProv = locMgr.getBestProvider(criteria, false);
+        location = locMgr.getLastKnownLocation(bestProv);
         return v;
     }
 
@@ -85,7 +88,6 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getActivity().setTitle("地圖");
-
         if (ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             getActivity().setTitle("No location");
             return;
@@ -93,7 +95,10 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         locMgr = (LocationManager) v.getContext().getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         bestProv = locMgr.getBestProvider(criteria, false);
-        Location location = locMgr.getLastKnownLocation(bestProv);
+        location = locMgr.getLastKnownLocation(bestProv);
+        if(location==null){
+            location = locMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
@@ -120,14 +125,30 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         }
         //db.execSQL("drop table tableGPS");
         paintLine();
-
     }
+    public void onResume() {
+        super.onResume();
+        handler.removeCallbacks(updateTimer);
+        //設定Delay的時間
+        handler.postDelayed(updateTimer, 10000);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (locMgr!= null) {
+            locMgr.removeUpdates(gLListenr);
+        }
+        db.close();
+        distance=0;
+        id=0;
+    }
+
 
     private Runnable updateTimer = new Runnable() {     //Timer
         @SuppressLint("MissingPermission")
         public void run() {
             try{
-                locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,gLListenr);
+                locMgr.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,gLListenr);
             }catch (Exception e){
             }
             handler.postDelayed(this, 3000);
@@ -194,13 +215,6 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
 
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        db.close();
-        distance=0;
-        id=0;
-    }
 
     public Cursor getAll(String tableName) {
         Cursor cursor = db.rawQuery("SELECT * FROM "+tableName, null);
