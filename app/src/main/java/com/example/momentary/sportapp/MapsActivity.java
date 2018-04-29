@@ -2,55 +2,36 @@ package com.example.momentary.sportapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Fragment;
-import android.util.Log;
-import android.app.FragmentManager;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
-import java.security.Provider;
-import java.security.spec.ECField;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Math.abs;
-import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
 public class MapsActivity extends android.support.v4.app.Fragment implements OnMapReadyCallback {
@@ -112,28 +93,31 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
             Toast.makeText(v.getContext(), "USE NETWORK LOCATION ", Toast.LENGTH_SHORT).show();
             location = locMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
+        try{
             LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,17));
-            try{
-                db.execSQL(createGPSTable);
-                db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
-                Cursor cursor=getAll("tableGPS");
-                if(cursor==null || cursor.getCount()==1){
-                    distance=0;
-                    id=1;
-                }else{
-                    cursor.moveToLast();
-                    distance=cursor.getDouble(3);
-                    id=cursor.getInt(0);
-                }
-            }catch (Exception e){
+        }catch (Exception e){
+        }
+        try{
+            db.execSQL(createGPSTable);
+            db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values ("+id+","+location.getLatitude()+","+location.getLongitude()+","+0+")");
+            Cursor cursor=getAll("tableGPS");
+            if(cursor==null || cursor.getCount()==1){
+                distance=0;
+                id=1;
+            }else{
+                cursor.moveToLast();
+                distance=cursor.getDouble(3);
+                id=cursor.getInt(0);
             }
-            //db.execSQL("drop table tableGPS");
+        }catch (Exception e){
+        }
+        //db.execSQL("drop table tableGPS");
+
 
     }
     public void onResume() {
         super.onResume();
-
     }
     @Override
     public void onPause() {

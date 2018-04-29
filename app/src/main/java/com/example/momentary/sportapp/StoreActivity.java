@@ -1,31 +1,19 @@
 package com.example.momentary.sportapp;
 
-import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.SupportMapFragment;
-
 import static android.content.Context.MODE_PRIVATE;
-import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
 
 public class StoreActivity extends  android.support.v4.app.Fragment {
     private final static String createTable = "CREATE TABLE tableFodder(_id interger not null,name text, count int, price int)";
@@ -70,14 +58,12 @@ public class StoreActivity extends  android.support.v4.app.Fragment {
         }catch (Exception e){
 
         }*/
-
        upDateWallet(); //顯示還有多少錢
         //db.execSQL("drop table tableWallet");
         //db.execSQL("drop table tableFodder");
         db.close();
         return v;
     }
-
     void Destroy(){
         db.close();
     }
