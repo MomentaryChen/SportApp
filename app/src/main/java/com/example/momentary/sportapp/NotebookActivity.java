@@ -76,13 +76,15 @@ public class NotebookActivity extends android.support.v4.app.Fragment {
     private View.OnClickListener rec_del = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
-
+            String deltitle = title.getText().toString();
         }
     };
 
     private View.OnClickListener rec_change = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
+            String changetitle = title.getText().toString();
+            String changecontent = title.getText().toString();
 
         }
     };
@@ -90,7 +92,7 @@ public class NotebookActivity extends android.support.v4.app.Fragment {
     private View.OnClickListener rec_search = new View.OnClickListener(){
         @Override
         public void onClick(View view) {
-
+            String searchtitle = title.getText().toString();
         }
     };
 
