@@ -48,6 +48,12 @@ public class WeightButtonActivity extends AppCompatActivity {
                             .replace(R.id.frameLayout, Map,"Map")
                             .commit();
                     return true;
+                case R.id.navigation_notebook:
+                    NotebookActivity Notebook= new NotebookActivity();
+                    frag.beginTransaction()
+                            .replace(R.id.frameLayout, Notebook,"Notebook")
+                            .commit();
+                    return true;
                 case R.id.navigation_collection:
                     CollectionActivity collection =  new CollectionActivity();
                     frag.beginTransaction()
