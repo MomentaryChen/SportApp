@@ -7,105 +7,35 @@
     tools:context=".NotebookActivity">
 
     <Button
-        android:id="@+id/Add"
+        android:id="@+id/btn_addnote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:text="新增"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-    <Button
-        android:id="@+id/Delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="刪除"
-        app:layout_constraintBottom_toBottomOf="@+id/Add"
-        app:layout_constraintStart_toEndOf="@+id/Add" />
-
-    <Button
-        android:id="@+id/Change"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="修改"
-        app:layout_constraintBottom_toBottomOf="@+id/Delete"
-        app:layout_constraintStart_toEndOf="@+id/Delete" />
-
-    <Button
-        android:id="@+id/Search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="查尋"
-        app:layout_constraintBottom_toBottomOf="@+id/Change"
-        app:layout_constraintStart_toEndOf="@+id/Change" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="386dp"
-        android:layout_height="21dp"
-        android:layout_marginTop="180dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></Spinner>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="373dp"
-        android:layout_height="209dp"
-        android:layout_marginStart="4dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="標題"
-            android:textSize="28dp"
-            tools:layout_editor_absoluteX="104dp"
-            tools:layout_editor_absoluteY="16dp" />
-
-        <EditText
-            android:id="@+id/editText_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:id="@+id/textView_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="內容"
-            android:textSize="28dp" />
-
-        <EditText
-            android:id="@+id/editText_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="370dp"
-        android:layout_height="117dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="148dp"
         android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        android:text="Add"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/lv_notes" />
 
-        <TextView
-            android:id="@+id/textView_show"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="37dp"
-            tools:layout_editor_absoluteY="245dp" />
-    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_notes"
+        android:layout_width="368dp"
+        android:layout_height="215dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:text="按ADD新增，點擊列表修改，長按刪除"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
