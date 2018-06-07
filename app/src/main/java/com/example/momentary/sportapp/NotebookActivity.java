@@ -66,7 +66,7 @@ public class NotebookActivity extends android.support.v4.app.Fragment {
         txtName.clear();
         for (int i = 0; i < cursor.getCount(); i++) {
             txtName.add(cursor.getString(0));
-            cursor.moveToNext() ;
+            cursor.moveToNext();
         }
         ArrayAdapter adapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, txtName);
         if(!adapter.isEmpty()){
