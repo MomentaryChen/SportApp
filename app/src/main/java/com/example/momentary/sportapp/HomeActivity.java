@@ -28,6 +28,7 @@ public class HomeActivity extends android.support.v4.app.Fragment {
     String[] Food=new String[] {"拉雞飼料","可以飼料","很棒飼料","終極飼料"};
     View v;
     int screenWide;
+    int stage=0;
     int screenHeight;
     int getFodderId=1;
     String getFodderName;
@@ -101,6 +102,21 @@ public class HomeActivity extends android.support.v4.app.Fragment {
                 .asGif()
                 .override(screenWide,screenHeight/4)
                 .into(imagePet);
+
+        imagePet.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(stage==0) {
+                    Toast.makeText(v.getContext(), "Hi 我是妙花種子", Toast.LENGTH_SHORT).show();
+                    stage = 1;
+                }
+                else {
+                    Toast.makeText(v.getContext(),"Hi Hi Hi",Toast.LENGTH_SHORT).show();
+                    stage=0;
+                }
+
+            }
+        });
     };
 
     private Button.OnClickListener onClick=new Button.OnClickListener(){

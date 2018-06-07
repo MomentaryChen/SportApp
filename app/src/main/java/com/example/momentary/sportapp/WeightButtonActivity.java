@@ -1,22 +1,14 @@
 package com.example.momentary.sportapp;
 
 
-import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Transition;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Collection;
-import java.util.Map;
 
 //extends FragmentActivity
 public class WeightButtonActivity extends AppCompatActivity {
@@ -53,6 +45,7 @@ public class WeightButtonActivity extends AppCompatActivity {
                     frag.beginTransaction()
                             .replace(R.id.frameLayout, Notebook,"Notebook")
                             .commit();
+
                     return true;
                 case R.id.navigation_collection:
                     CollectionActivity collection =  new CollectionActivity();

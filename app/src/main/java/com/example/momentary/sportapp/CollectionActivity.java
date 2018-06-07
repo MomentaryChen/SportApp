@@ -1,5 +1,6 @@
 package com.example.momentary.sportapp;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -86,6 +88,7 @@ public class CollectionActivity extends android.support.v4.app.Fragment {
         db.close();
         return v;
     }
+
 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
