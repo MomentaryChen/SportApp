@@ -48,7 +48,7 @@
                 android:id="@+id/emp_list_show"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="請新增餵食時間"
+                android:text="請新增"
                 android:gravity="center"
                 android:textSize="40dp"
                 android:visibility="invisible" />
