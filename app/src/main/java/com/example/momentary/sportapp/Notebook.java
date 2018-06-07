@@ -73,16 +73,6 @@ public class Notebook extends AppCompatActivity {
                 db.execSQL("Insert into "+table_name+"(name,content) values ('"+name+"' , '"+ content+ "') ");
                 Toast.makeText(this,"儲存成功",Toast.LENGTH_SHORT).show();
             }else if(act==1){
-                Cursor cursor = getAll();
-                cursor.moveToFirst();
-                for (int i=0;i<cursor.getCount();i++){
-                    if(cursor.getString(0).equals(name)) {
-                        Toast.makeText(this,"名稱不能重複",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    cursor.moveToNext();
-                }
-
                 db.execSQL("update "+table_name+" set name ='"+name+"' , content = '"+content +"' where name = '"+firstName+"'");
                 Toast.makeText(this,"儲存成功",Toast.LENGTH_SHORT).show();
             }else if(act==2){
