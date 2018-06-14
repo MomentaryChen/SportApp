@@ -42,7 +42,9 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
     private LocationManager locMgr;
     private final static String createGPSTable = "CREATE TABLE tableGPS(_id integer not null,loc_x real,loc_y real,distance real)";
     private SQLiteDatabase db = null;
+    private SQLiteDatabase dbStore = null;
     double distance = 0;
+    private int wallet=0;
     int id = 0;
     String bestProv;
     Location location;
@@ -125,9 +127,12 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         if (locMgr!= null) {
             locMgr.removeUpdates(gLListenr);
         }
-        db.close();
+
         distance=0;
         id=0;
+        if(db!=null) db.close();
+        if(dbStore!=null) dbStore.close();
+
     }
 
     private Runnable updateTimer = new Runnable() {     //Timer
@@ -162,8 +167,10 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
                     String tContent = String.format("緯差 : %s\n經度差 : %s距離",abs(Latitude),abs(Longitude),distance);
                     id++;
                     db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values (" + id + "," + Latitude+ "," + Longitude+ "," + distance + ")");
-                    Toast.makeText(v.getContext(), tContent, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), tContent+" 100寵物幣", Toast.LENGTH_SHORT).show();
                     paintLine();
+                    addMomey();
+
                 }else{
                     Toast.makeText(v.getContext(), "沒有移動 ", Toast.LENGTH_SHORT).show();
                 }
@@ -188,6 +195,12 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         }
     };
 
+    public void addMomey(){
+        dbStore  = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
+        wallet += 5;
+        dbStore.execSQL("update tableWallet set money= "+ wallet + "where _id=0");
+        //db.execSQL("");
+    }
     public void paintLine() {
         Cursor cursor = getAll("tableGPS");
         PolylineOptions rectOptions = new PolylineOptions();
@@ -202,6 +215,15 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
 
     }
 
+    void upDateWallet(){
+        Cursor cursor=getAll("tableWallet");
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+            wallet = cursor.getInt(1);
+
+
+        }
+    }
 
     public Cursor getAll(String tableName) {
         Cursor cursor = db.rawQuery("SELECT * FROM "+tableName, null);
