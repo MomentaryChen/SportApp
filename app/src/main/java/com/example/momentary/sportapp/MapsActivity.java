@@ -90,7 +90,7 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
 
         bestProv = locMgr.getBestProvider(criteria, false);
         location = locMgr.getLastKnownLocation(bestProv);
-        paintLine();
+
         if(location==null){
             Toast.makeText(v.getContext(), "USE NETWORK LOCATION ", Toast.LENGTH_SHORT).show();
             location = locMgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -115,7 +115,7 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
         }catch (Exception e){
         }
         //db.execSQL("drop table tableGPS");
-
+        paintLine();
 
     }
     public void onResume() {
@@ -160,14 +160,14 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
                 double passLatitude=cursor.getDouble(1);
                 double passLongtitude=cursor.getDouble(2);
                 if(abs(Latitude-passLatitude)>=0.00005 || abs(Longitude-passLongtitude)>=0.00005) {
-                    distance += pow(Math.pow(abs(Latitude - passLatitude), 2) + Math.pow(abs(Longitude - passLongtitude), 2), 1 / 2) * 110;
+                    distance += (abs(Latitude - passLatitude)) + abs(Longitude - passLongtitude)/2  * 110;
                     Log.v("distance",Double.toString(distance));
                     Log.v("Latitude",Double.toString(abs(Latitude-passLatitude)));
                     Log.v("Longitude",Double.toString(abs(Longitude-passLongtitude)));
                     String tContent = String.format("緯差 : %s\n經度差 : %s距離",abs(Latitude),abs(Longitude),distance);
                     id++;
                     db.execSQL("INSERT INTO tableGPS(_id,loc_x,loc_y,distance) values (" + id + "," + Latitude+ "," + Longitude+ "," + distance + ")");
-                    Toast.makeText(v.getContext(), tContent+" 100寵物幣", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), tContent+" \n+5寵物幣", Toast.LENGTH_SHORT).show();
                     paintLine();
                     addMomey();
 
@@ -197,8 +197,11 @@ public class MapsActivity extends android.support.v4.app.Fragment implements OnM
 
     public void addMomey(){
         dbStore  = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
+        Cursor cursor = dbStore.rawQuery("SELECT * FROM tableWallet", null);
+        cursor.moveToFirst();
+        wallet = cursor.getInt(1);
         wallet += 5;
-        dbStore.execSQL("update tableWallet set money= "+ wallet + "where _id=0");
+        dbStore.execSQL("update tableWallet set money= "+ wallet + " where _id=0");
         //db.execSQL("");
     }
     public void paintLine() {

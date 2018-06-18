@@ -65,27 +65,27 @@ public class CollectionActivity extends android.support.v4.app.Fragment {
         db = getActivity().openOrCreateDatabase("SportApp.db", MODE_PRIVATE, null);
         //db.execSQL("drop table tableGPS");
         try{
-            db.execSQL(createGPSTable);
+            Cursor cursor=getAll("tableGPS");
+            if(cursor==null ||cursor.getCount()<=0 ){
+                distance=0;
+            }else{
+                cursor.moveToLast();
+                distance=cursor.getDouble(3);
+                if(distance>500){
+                    Toast.makeText(v.getContext(),"You get the new pet",Toast.LENGTH_LONG).show();
+                    Glide.with(v.getContext())
+                            .load(R.drawable.oddish_mini_01)
+                            .asGif()
+                            .centerCrop()
+                            .override(200,200)
+                            .into(imgbtn3);
+                }
+            }
+            getActivity().setTitle("圖鑑    已完成距離"+Double.toString(distance)+"KM");             //debug
+            db.close();
         }catch (Exception e){
         }
-        Cursor cursor=getAll("tableGPS");
-        if(cursor==null ||cursor.getCount()<=0 ){
-            distance=0;
-        }else{
-            cursor.moveToLast();
-            distance=cursor.getDouble(3);
-            if(distance>500){
-                Toast.makeText(v.getContext(),"You get the new pet",Toast.LENGTH_LONG).show();
-                Glide.with(v.getContext())
-                        .load(R.drawable.oddish_mini_01)
-                        .asGif()
-                        .centerCrop()
-                        .override(200,200)
-                        .into(imgbtn3);
-            }
-        }
-        getActivity().setTitle("圖鑑    已完成距離"+Double.toString(distance)+"KM");             //debug
-        db.close();
+
         return v;
     }
 
