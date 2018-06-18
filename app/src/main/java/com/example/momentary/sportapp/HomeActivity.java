@@ -38,6 +38,7 @@ public class HomeActivity extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.activity_home, container, false);
+        getActivity().setTitle(R.string.app_name);
         // 拿到螢幕大小
         setBoard();
         nowExp =v.findViewById(R.id.nowExp);
